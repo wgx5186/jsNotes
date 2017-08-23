@@ -84,45 +84,45 @@
 六、思考题
 	如果你能理解下面代码的运行结果，应该就算理解闭包的运行机制了。
 	Js代码 
-	　　var name = "The Window";   
-	　　var object = {   
+	var name = "The Window";   
+	var object = {   
 	　　　　name : "My Object",   
 	　　　　getNameFunc : function(){   
-	　　　　　　	return function(){   
-	　　　　　　　　	return this.name;   
-	　　　　　	};   
-	　　　　}   
-		};   
-		alert(object.getNameFunc()());  //The Window
+	　　　　　　return function(){   
+	　　　　　　　　return this.name;   
+	　　　　};   
+	　　}   
+	};   
+	alert(object.getNameFunc()());  //The Window
 --------------------------------------------------------------------------------------------------------
 JavaScript闭包例子
 	function outerFun(){
 		var a=0;
 		function innerFun(){
-		   	a++;
-		   	alert(a);
+			a++;
+			alert(a);
 		}    
 	 }
 	innerFun()
-	上面的代码是错误的.innerFun()的作用域在outerFun()内部,所在outerFun()外部调用它是错误的.
-	改成如下,也就是闭包:
-	Js代码
-		function outerFun(){
-		 	var a=0;
-		 	function innerFun(){
-			  	a++;
-			  	alert(a);
-			 }
-		 	return innerFun;  //注意这里
-		}
-		var obj=outerFun();
-		obj();  //结果为1
-		obj();  //结果为2
-		var obj2=outerFun();
-		obj2();  //结果为1
-		obj2();  //结果为2
-	什么是闭包:
-	当内部函数 在定义它的作用域 的外部 被引用时,就创建了该内部函数的闭包 ,如果内部函数引用了位于外部函数的变量,当外部函数调用完毕后,这些变量在内存不会被 释放,因为闭包需要它们.
+上面的代码是错误的.innerFun()的作用域在outerFun()内部,所在outerFun()外部调用它是错误的.
+改成如下,也就是闭包:
+Js代码
+	function outerFun(){
+		var a=0;
+		function innerFun(){
+			a++;
+			alert(a);
+		 }
+		return innerFun;  //注意这里
+	}
+	var obj=outerFun();
+	obj();  //结果为1
+	obj();  //结果为2
+	var obj2=outerFun();
+	obj2();  //结果为1
+	obj2();  //结果为2
+什么是闭包:
+当内部函数 在定义它的作用域 的外部 被引用时,就创建了该内部函数的闭包 ,如果内部函数引用了位于外部函数的变量,当外部函数调用完毕后,这些变量在内存不会被 释放,因为闭包需要它们.
 --------------------------------------------------------------------------------------------------------
 再来看一个例子
 	Js代码
