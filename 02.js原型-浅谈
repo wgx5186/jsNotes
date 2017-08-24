@@ -1,0 +1,84 @@
+
+
+一、js中的原型毫无疑问一个难点，学习如果不深入很容易就晕了！
+    在参考了多方面的资料后，发现解释都太过专业，对于很多还没有接触过面向对象
+    语言的小白来说，有理解不了里面的专有名词！
+    如果你没学过c++或者Java之类的更接触底层的语言，那就不要太深究，理解会用自然可以了，当接触到更多语言时慢慢的会理解越来越深刻！
+
+
+    下面我就举例分享一下prototype的概念！知道对于初学者知道这些就足够了！
+
+    funcion Person(name){
+      this.name = name;
+      this.showMe = function(){
+        alert(this.name);
+      }
+    }
+    var one = new Person("JavaScript");
+    one.showMe(); //JavaScript
+
+    分析一下，上面这个例子！我们可以知道 People的类型是一个对象！
+    按照javascript的说法，function定义的这个Person就是一个Object(对象),而且还是一个很特殊的对象，
+    这个使用function定义的对象与使用new操作符生成的对象之间有一个重要的区别。
+    这个区别就是function定义的对象有一个prototype属性，使用new生成的对象就没有这个prototype属性，我们一般称为普通对象！
+
+    我们需要理解记忆以下的逻辑顺序：
+    Person是一个对象，它有一个prototype的原型属性（因为所有的对象都一prototype原型！）prototype属性有自己的prototype对象，
+    而pototype对象肯定也有自己的constuct属性，construct属性有自己的constuctor对象，
+    神奇的事情要发生了，这最后一个constructor对象就是我们构造出来的function函数本身！
+
+ 
+
+二、这样绕人的逻辑，总想一探究竟，要记得这是一种规定的逻辑思维，我们要做的是慢慢接受这种逻辑思维！我们不理论研究，用实例说话：
+
+    funcion Person(name){
+      this.name = name;
+      this.showMe = function(){
+        alert(this.name);
+      }
+    }
+    var one = new Person("js");
+    alert(one.prototype);//undefined  //证明了 new出来的普通对象是没有原型的
+    alert(typeof person.prototype);// object //证明了 我们构造的function的原型是个对象
+    alert(Person.prototype.constructor); //function Person(){....} //
+
+ 
+
+三、下面我们不免有了疑问，学这么绕的东西干什么，它给我们最实际的用处就是我们可以用原型来创建对象的属性和方法！
+    我们不用它不也是可以创建属性和方法！这里是有区别的，既然不一样就有存在的价值！
+    我们可以通过给原型添加属性和方法来给给对象添加属性或方法！
+    Hero.prototype.name;
+    Hero.prototype.sayMe = function(){"添加对象的方法其实就是添加函数"}
+
+    让我们再深一步：当我们给对象添加了同名的属性或方法时会发生什么？
+
+    function Hero(){
+      this.name = "张无忌";
+      this.sayMe = function(){
+        alert("这是张无忌");
+      }
+    }
+    //通过原型添加属性和方法
+    Hero.prototype.name = "周芷若";
+    Hero.prototype.sayMe = function(){
+      alert("这是周芷若");
+    };
+    var hero = new Hero();
+    alert(hero.name);//张无忌
+    hero.sayMe();//这是张无忌
+    
+    //delete hero.name
+    
+    alert(hero.name);//周芷若
+
+ 
+
+我们验证了这个例子得到得到了一些结论：
+当函数对象本身的属性或方法与原型的属性或方法同名的时候：
+    1、默认调用的是函数对象本身的属性或方法.
+    2、通过原型增加的属性或方法的确是存在的.
+    3、函数对象本身的属性或方法的优先级要高于原型的属性或方法.
+    
+    
+    
+    
