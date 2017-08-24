@@ -8,7 +8,7 @@
 
     下面我就举例分享一下prototype的概念！知道对于初学者知道这些就足够了！
 
-    funcion Person(name){
+    function Person(name){
       this.name = name;
       this.showMe = function(){
         alert(this.name);
@@ -31,7 +31,7 @@
 
 二、这样绕人的逻辑，总想一探究竟，要记得这是一种规定的逻辑思维，我们要做的是慢慢接受这种逻辑思维！我们不理论研究，用实例说话：
 
-    funcion Person(name){
+    function Person(name){
       this.name = name;
       this.showMe = function(){
         alert(this.name);
