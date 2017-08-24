@@ -1,0 +1,135 @@
+
+
+说到prototype，就不得不先说下new的过程。
+
+我们先看看这样一段代码：
+
+  <script type="text/javascript">
+    var Person = function (){ };
+    var p = new Person();
+  </script>
+  
+很简单的一段代码，我们来看看这个new究竟做了什么？我们可以把new的过程拆分成以下三步：
+
+<1> var p={}; 也就是说，初始化一个对象p。
+
+<2> p.__proto__=Person.prototype;
+
+<3> Person.call(p);也就是说构造p，也可以称之为初始化p。
+
+关键在于第二步，我们来证明一下：
+
+<script type="text/javascript">
+  var Person = function (){ };
+  var p = new Person();
+  alert(p.__proto__ === Person.prototype);
+</script>
+这段代码会返回true。说明我们步骤2的正确。
+
+那么__proto__是什么？我们在这里简单地说下。每个对象都会在其内部初始化一个属性，就是__proto__，
+当我们访问一个对象的属性时，如果这个对象内部不存在这个属性，那么他就会去__proto__里找这个属性，这个__proto__又会有自己的__proto__，
+于是就这样 一直找下去，也就是我们平时所说的原型链的概念。
+
+按照标准，__proto__是不对外公开的，也就是说是个私有属性，但是Firefox的引擎将他暴露了出来成为了一个共有的属性，我们可以对外访问和设置。
+
+概念说清了，让我们看一下下面这些代码：
+
+<script type="text/javascript">
+  var Person = function (){ };
+  Person.prototype.Say = function (){
+    alert("Person say");
+  }
+  var p = new Person();
+  p.Say();
+</script>
+这段代码很简单，相信每个人都这样写过，那就让我们看下为什么p可以访问Person的Say。
+
+首先var p=new Person()；可以得出p.__proto__=Person.prototype。
+那么当我们调用p.Say()时，首先p中没有Say这个属性， 
+于是，他就需要到他的__proto__中去找，也就是Person.prototype，
+而我们在上面定义了 Person.prototype.Say=function(){}; 于是，就找到了这个方法。
+
+好，接下来，让我们看个更复杂的。
+
+<script type="text/javascript">
+	var Person = function (){ };
+  Person.prototype.Say = function (){
+	  alert("Person say");
+	}
+	Person.prototype.Salary = 50000;
+ 
+	var Programmer = function (){ };
+	Programmer.prototype = new Person();
+	Programmer.prototype.WriteCode = function (){
+	  alert("programmer writes code");
+	};
+ 
+	Programmer.prototype.Salary = 500;
+  
+	var p = new Programmer();
+	p.Say();
+	p.WriteCode();
+	alert(p.Salary);
+</script>
+我们来做这样的推导：
+
+var p=new Programmer()可以得出p.__proto__=Programmer.prototype;
+
+而在上面我们指定了Programmer.prototype=new Person();我们来这样拆分，var p1=new Person();Programmer.prototype=p1;那么:
+
+p1.__proto__=Person.prototype;
+
+Programmer.prototype.__proto__=Person.prototype;
+
+由根据上面得到p.__proto__=Programmer.prototype。可以得到p.__proto__.__proto__=Person.prototype。
+
+好，算清楚了之后我们来看上面的结果,p.Say()。由于p没有Say这个属性，于是去p.__proto__，
+也就是 Programmer.prototype，也就是p1中去找，由于p1中也没有Say，
+那就去p.__proto__.__proto__，也就是 Person.prototype中去找，于是就找到了alert(“Person say”)的方法。
+
+其余的也都是同样的道理。
+
+这也就是原型链的实现原理。
+
+最后，其实prototype只是一个假象，他在实现原型链中只是起到了一个辅助作用，
+换句话说，他只是在new的时候有着一定的价值，而原型链的本质，其实在于__proto__！
+
+new 操作符
+在有上面的基础概念的介绍之后，在加上new操作符，我们就能完成传统面向对象的class + new的方式创建对象，
+在JavaScript中，我们将这类方式成为Pseudoclassical。
+基于上面的例子，我们执行如下代码
+ 
+
+var obj = new Base();
+
+这样代码的结果是什么，我们在javascript引擎中看到的对象模型是：
+
+new操作符具体干了什么呢?其实很简单，就干了三件事情。
+ 
+
+var obj 
+ = {};
+obj.__proto__ = Base.prototype;
+Base.call(obj);
+
+第一行，我们创建了一个空对象obj
+第二行，我们将这个空对象的__proto__成员指向了Base函数对象prototype成员对象
+第三行，我们将Base函数对象的this指针替换成obj，然后再调用Base函数，
+于是我们就给obj对象赋值了一个id成员变量，这个成员变量的值是”base”，关于call函数的用法，
+ 
+
+如果我们给Base.prototype的对象添加一些函数会有什么效果呢？
+例如代码如下：
+ 
+
+Base.prototype.toString =
+function() {
+    return this.id;
+}
+
+那么当我们使用new创建一个新对象的时候，根据__proto__的特性，toString这个方法也可以做新对象的方法被访问到。于是我们看到了：
+构造子中，我们来设置‘类’的成员变量（例如：例子中的id），构造子对象prototype中我们来设置‘类’的公共方法。
+于是通过函数对象和Javascript特有的__proto__与prototype成员及new操作符，模拟出类和类实例化的效果。
+
+
+
