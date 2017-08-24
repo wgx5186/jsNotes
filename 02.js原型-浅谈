@@ -39,7 +39,7 @@
     }
     var one = new Person("js");
     alert(one.prototype);//undefined  //证明了 new出来的普通对象是没有原型的
-    alert(typeof person.prototype);// object //证明了 我们构造的function的原型是个对象
+    alert(typeof Person.prototype);// object //证明了 我们构造的function的原型是个对象
     alert(Person.prototype.constructor); //function Person(){....} //
 
  
