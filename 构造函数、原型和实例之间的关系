@@ -1,0 +1,10 @@
+
+一、 Object
+     Object.__proto__ 指向 Function.prototype （Object 实质是一个函数）
+     
+二、 Arrary
+     Arrary.__proto__ 指向 Function.prototype（Arrary 实质是一个函数）
+     
+三、 Function
+     Function.__proto__ 指向 Object.prototype
+     Object.prototype.__proto__ == null
